@@ -319,6 +319,134 @@ public class TicketsController : ControllerBase
         return Ok(ticket);
     }
 
+    [HttpPost("validate/{ticketNumber}")]
+    public async Task<IActionResult> ValidateTicket(
+        string ticketNumber)
+    {
+        if (string.IsNullOrWhiteSpace(ticketNumber))
+        {
+            return BadRequest(new
+            {
+                message = "A ticket number is required."
+            });
+        }
+
+        var normalizedTicketNumber = ticketNumber
+            .Trim()
+            .ToUpperInvariant();
+
+        var ticket = await _context.Tickets
+            .Include(ticket => ticket.BusRoute)
+            .Include(ticket => ticket.BusCard)
+            .SingleOrDefaultAsync(ticket =>
+                ticket.TicketNumber == normalizedTicketNumber);
+
+        if (ticket is null)
+        {
+            return NotFound(new
+            {
+                message = "The ticket is invalid or does not exist."
+            });
+        }
+
+        if (ticket.Status == "Used")
+        {
+            return BadRequest(new
+            {
+                message = "This ticket has already been used.",
+                ticketNumber = ticket.TicketNumber,
+                usedAtUtc = ticket.UsedAtUtc
+            });
+        }
+
+        if (ticket.Status == "Cancelled")
+        {
+            return BadRequest(new
+            {
+                message = "This ticket has been cancelled."
+            });
+        }
+
+        if (ticket.Status == "Expired")
+        {
+            return BadRequest(new
+            {
+                message = "This ticket has expired.",
+                validUntilUtc = ticket.ValidUntilUtc
+            });
+        }
+
+        var currentTimeUtc = DateTime.UtcNow;
+
+        if (currentTimeUtc < ticket.ValidFromUtc)
+        {
+            return BadRequest(new
+            {
+                message = "This ticket is not valid yet.",
+                validFromUtc = ticket.ValidFromUtc
+            });
+        }
+
+        if (currentTimeUtc > ticket.ValidUntilUtc)
+        {
+            ticket.Status = "Expired";
+
+            await _context.SaveChangesAsync();
+
+            return BadRequest(new
+            {
+                message = "This ticket has expired.",
+                validUntilUtc = ticket.ValidUntilUtc
+            });
+        }
+
+        if (!ticket.BusCard.IsActive)
+        {
+            return BadRequest(new
+            {
+                message =
+                    "The bus card associated with this ticket is inactive."
+            });
+        }
+
+        ticket.Status = "Used";
+        ticket.UsedAtUtc = currentTimeUtc;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Ticket validated successfully. Passenger may board.",
+
+            ticket = new
+            {
+                ticket.Id,
+                ticket.TicketNumber,
+                ticket.Status,
+                ticket.FareAmount,
+                ticket.PurchasedAtUtc,
+                ticket.ValidFromUtc,
+                ticket.ValidUntilUtc,
+                ticket.UsedAtUtc,
+
+                route = new
+                {
+                    ticket.BusRoute.Id,
+                    ticket.BusRoute.RouteCode,
+                    ticket.BusRoute.RouteName,
+                    ticket.BusRoute.Origin,
+                    ticket.BusRoute.Destination
+                },
+
+                busCard = new
+                {
+                    ticket.BusCard.Id,
+                    ticket.BusCard.CardNumber
+                }
+            }
+        });
+    }
+
     private int? GetPassengerId()
     {
         var passengerIdValue =
