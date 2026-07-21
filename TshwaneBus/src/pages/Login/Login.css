@@ -1,0 +1,381 @@
+/* ---------- RESET ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---------- WRAPPER (flex) ---------- */
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ---------- LEFT SIDE ---------- */
+.login-left {
+  flex: 1;                     /* Takes half the width */
+  background: url('/src/assets/bus-bg.jpeg') center/cover no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* Dark overlay */
+.login-left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.brand-box {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.brand-icon {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.brand-title {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.8;
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  padding-top: 0.5rem;
+  display: inline-block;
+  margin-top: 0.2rem;
+}
+
+.brand-tagline {
+  margin: 2rem 0 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.brand-tagline span {
+  display: block;
+}
+
+.brand-features {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  backdrop-filter: blur(4px);
+  flex-wrap: wrap;
+}
+
+.brand-features span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ---------- RIGHT SIDE ---------- */
+.login-right {
+  flex: 1;                     /* Takes half the width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: white;
+  min-height: 100vh;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem 0;
+}
+
+/* ---------- HEADER ---------- */
+.form-header {
+  margin-bottom: 1.8rem;
+}
+
+.welcome-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 0.3rem;
+}
+
+.welcome-description {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ---------- MESSAGES ---------- */
+.error-box {
+  background: #fef2f2;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid #fecaca;
+}
+
+.error-icon {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.error-text {
+  font-size: 0.85rem;
+  color: #dc2626;
+  line-height: 1.4;
+}
+
+.success-box {
+  background: #ecfdf5;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #a7f3d0;
+}
+
+.success-icon {
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.success-text {
+  font-size: 0.85rem;
+  color: #16a34a;
+}
+
+/* ---------- FORM FIELDS ---------- */
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  color: #1a1a2e;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #e94560;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(233, 69, 96, 0.08);
+}
+
+.input-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-group input::placeholder {
+  color: #b0b0b0;
+}
+
+/* ---------- BUTTON ---------- */
+.login-btn {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #e94560, #c7354a);
+  color: white;
+  transition: all 0.3s ease;
+  margin-top: 0.3rem;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(233, 69, 96, 0.35);
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------- FOOTER LINKS ---------- */
+.form-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.forgot-link {
+  display: block;
+  color: #e94560;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  color: #c7354a;
+}
+
+.signup-link {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.signup-link a {
+  color: #e94560;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+/* Tablet & smaller */
+@media (max-width: 768px) {
+  .login-wrapper {
+    flex-direction: column;    /* Stack vertically */
+  }
+
+  .login-left {
+    min-height: 40vh;         /* Shorter on mobile */
+    padding: 1.5rem;
+  }
+
+  .login-right {
+    min-height: 60vh;
+    padding: 1.5rem;
+  }
+
+  .brand-title {
+    font-size: 2.2rem;
+  }
+
+  .brand-tagline {
+    font-size: 1rem;
+    margin: 1rem 0;
+  }
+
+  .brand-tagline span {
+    display: inline;
+  }
+
+  .brand-features {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    gap: 0.8rem;
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+
+  .login-form-container {
+    max-width: 100%;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .login-left {
+    min-height: 30vh;
+    padding: 1rem;
+  }
+
+  .brand-icon {
+    font-size: 2.5rem;
+  }
+
+  .brand-title {
+    font-size: 1.8rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+  }
+
+  .brand-tagline {
+    font-size: 0.85rem;
+    margin: 0.8rem 0;
+  }
+
+  .brand-features {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .login-right {
+    padding: 1rem;
+  }
+
+  .welcome-title {
+    font-size: 1.2rem;
+  }
+
+  .welcome-description {
+    font-size: 0.85rem;
+  }
+
+  .input-group input {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .login-btn {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+  }
+}
