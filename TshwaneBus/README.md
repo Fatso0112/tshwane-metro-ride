@@ -7,69 +7,46 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+# Project Structure 
+tshwanebus/
+├── public/
+│   └── vite.svg
+│
+├── src/
+│   ├── assets/
+│   │   └── bus-bg.jpg                 // Bus background image
+│   │
+│   ├── pages/
+│   │   ├── Home/
+│   │   │   ├── Home.tsx               // Home page component
+│   │   │   └── Home.css               // Home page styles
+│   │   │
+│   │   ├── Login/
+│   │   │   ├── Login.tsx              // Login page component
+│   │   │   └── Login.css              // Login page styles
+│   │   │
+│   │   └── Register/
+│   │       ├── Register.tsx           // Register page component
+│   │       └── Register.css           // Register page styles
+│   │
+│   ├── routes/
+│   │   └── AppRoutes.tsx              // All route definitions with animations
+│   │
+│   ├── types/
+│   │   └── auth.types.ts              // TypeScript interfaces
+│   │
+│   ├── App.tsx                        // Root App component
+│   ├── App.css                        // Global App styles
+│   ├── main.tsx                       // Entry point with Router
+│   └── index.css                      // Global styles
+│
+├── index.html                          // HTML template
+├── package.json                        // Dependencies
+├── package-lock.json                   // Locked dependencies
+├── tsconfig.json                       // TypeScript config
+├── tsconfig.app.json                   // TypeScript app config
+├── tsconfig.node.json                  // TypeScript node config
+├── vite.config.ts                      // Vite config
+├── .gitignore                          // Git ignore file
+├── .eslintrc.json                      // ESLint config
+└── README.md                           // Project documentation
