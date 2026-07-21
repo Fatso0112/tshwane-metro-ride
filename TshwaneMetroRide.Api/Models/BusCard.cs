@@ -15,4 +15,7 @@ public class BusCard
     public int PassengerId { get; set; }
 
     public Passenger Passenger { get; set; } = null!;
+
+    public ICollection<WalletTransaction> Transactions { get; set; } = 
+        new List<WalletTransaction>();
 }

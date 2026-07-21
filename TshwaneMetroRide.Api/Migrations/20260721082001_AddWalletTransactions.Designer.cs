@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TshwaneMetroRide.Api.Data;
 
@@ -11,9 +12,11 @@ using TshwaneMetroRide.Api.Data;
 namespace TshwaneMetroRide.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260721082001_AddWalletTransactions")]
+    partial class AddWalletTransactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,6 +99,80 @@ namespace TshwaneMetroRide.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Passengers");
+                });
+
+            modelBuilder.Entity("TshwaneMetroRide.Api.Models.WalletTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal>("BalanceAfter")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<int>("BusCardId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
+
+                    b.HasIndex("BusCardId", "CreatedAtUtc");
+
+                    b.ToTable("WalletTransactions");
+                });
+
+            modelBuilder.Entity("TshwaneMetroRide.Api.Models.BusCard", b =>
+                {
+                    b.HasOne("TshwaneMetroRide.Api.Models.Passenger", "Passenger")
+                        .WithMany("BusCards")
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Passenger");
+                });
+
+            modelBuilder.Entity("TshwaneMetroRide.Api.Models.WalletTransaction", b =>
+                {
+                    b.HasOne("TshwaneMetroRide.Api.Models.BusCard", "BusCard")
+                        .WithMany("Transactions")
+                        .HasForeignKey("BusCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BusCard");
+                });
+
+            modelBuilder.Entity("TshwaneMetroRide.Api.Models.BusCard", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("TshwaneMetroRide.Api.Models.Passenger", b =>
+                {
+                    b.Navigation("BusCards");
                 });
 #pragma warning restore 612, 618
         }

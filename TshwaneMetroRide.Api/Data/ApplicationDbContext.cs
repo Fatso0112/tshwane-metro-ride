@@ -15,6 +15,9 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<BusCard> BusCards => Set<BusCard>();
 
+    public DbSet<WalletTransaction> WalletTransactions => 
+        Set<WalletTransaction>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -40,29 +43,6 @@ public class ApplicationDbContext : DbContext
             entity.Property(passenger => passenger.PasswordHash)
                 .HasMaxLength(500)
                 .IsRequired();
-        });
-
-        modelBuilder.Entity<BusCard>(entity =>
-        {
-            entity.HasKey(card => card.Id);
-
-            entity.Property(card => card.CardNumber)
-                .HasMaxLength(30)
-                .IsRequired();
-
-            entity.HasIndex(card => card.CardNumber)
-                .IsUnique();
-
-            entity.Property(card => card.Balance)
-                .HasPrecision(12, 2);
-
-            entity.Property(card => card.IsActive)
-                .HasDefaultValue(true);
-
-            entity.HasOne(card => card.Passenger)
-                .WithMany(passenger => passenger.BusCards)
-                .HasForeignKey(card => card.PassengerId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
