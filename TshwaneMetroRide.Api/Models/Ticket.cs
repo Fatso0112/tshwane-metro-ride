@@ -21,6 +21,8 @@ public class Ticket
 
     public DateTime ValidUntilUtc { get; set; }
 
+    public DateTime? UsedAtUtc { get; set; }
+
     public int BusCardId { get; set; }
 
     public BusCard BusCard { get; set; } = null!;
@@ -28,4 +30,5 @@ public class Ticket
     public int BusRouteId { get; set; }
 
     public BusRoute BusRoute { get; set; } = null!;
+    
 }
