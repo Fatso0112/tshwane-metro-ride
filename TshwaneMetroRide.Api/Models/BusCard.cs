@@ -18,4 +18,7 @@ public class BusCard
 
     public ICollection<WalletTransaction> Transactions { get; set; } = 
         new List<WalletTransaction>();
+
+    public ICollection<Ticket> Tickets { get; set; } = 
+        new List<Ticket>();
 }
