@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TshwaneMetroRide.Api.Data;
 
@@ -11,9 +12,11 @@ using TshwaneMetroRide.Api.Data;
 namespace TshwaneMetroRide.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260721114915_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,67 +174,6 @@ namespace TshwaneMetroRide.Api.Migrations
                     b.ToTable("Passengers");
                 });
 
-            modelBuilder.Entity("TshwaneMetroRide.Api.Models.Ticket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BusCardId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BusRouteId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("FareAmount")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("decimal(12,2)");
-
-                    b.Property<string>("PassengerPhone")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<DateTime>("PurchasedAtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("QrCodeValue")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("TicketNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("ValidFromUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("ValidUntilUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BusRouteId");
-
-                    b.HasIndex("QrCodeValue")
-                        .IsUnique();
-
-                    b.HasIndex("TicketNumber")
-                        .IsUnique();
-
-                    b.HasIndex("BusCardId", "PurchasedAtUtc");
-
-                    b.ToTable("Tickets");
-                });
-
             modelBuilder.Entity("TshwaneMetroRide.Api.Models.WalletTransaction", b =>
                 {
                     b.Property<int>("Id")
@@ -285,25 +227,6 @@ namespace TshwaneMetroRide.Api.Migrations
                     b.Navigation("Passenger");
                 });
 
-            modelBuilder.Entity("TshwaneMetroRide.Api.Models.Ticket", b =>
-                {
-                    b.HasOne("TshwaneMetroRide.Api.Models.BusCard", "BusCard")
-                        .WithMany("Tickets")
-                        .HasForeignKey("BusCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TshwaneMetroRide.Api.Models.BusRoute", "BusRoute")
-                        .WithMany("Tickets")
-                        .HasForeignKey("BusRouteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("BusCard");
-
-                    b.Navigation("BusRoute");
-                });
-
             modelBuilder.Entity("TshwaneMetroRide.Api.Models.WalletTransaction", b =>
                 {
                     b.HasOne("TshwaneMetroRide.Api.Models.BusCard", "BusCard")
@@ -317,14 +240,7 @@ namespace TshwaneMetroRide.Api.Migrations
 
             modelBuilder.Entity("TshwaneMetroRide.Api.Models.BusCard", b =>
                 {
-                    b.Navigation("Tickets");
-
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("TshwaneMetroRide.Api.Models.BusRoute", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("TshwaneMetroRide.Api.Models.Passenger", b =>
