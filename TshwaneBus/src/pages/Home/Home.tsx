@@ -44,7 +44,7 @@ export const Home = () => {
               <span className="action-icon"></span>
               <span className="action-label">View timetable</span>
             </Link>
-            <Link to="/top-up" className="action-card">
+            <Link to="/wallet" className="action-card">
               <span className="action-icon"></span>
               <span className="action-label">Top up Connector</span>
             </Link>

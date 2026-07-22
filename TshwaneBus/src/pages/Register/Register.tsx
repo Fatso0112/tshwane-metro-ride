@@ -4,7 +4,7 @@ import type { ChangeEvent, SyntheticEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import type { RegisterData, LocationState } from '../../types/auth.types'
 import './Register.css'
-import { FaUser, FaEnvelope, FaPhone, FaLock } from 'react-icons/fa'
+import { FaUser, FaEnvelope, FaPhone, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import busImage from '../../assets/busImage.jpeg'
 import logo from '../../assets/logo.png'
 
@@ -20,6 +20,9 @@ export const Register = () => {
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -58,7 +61,7 @@ export const Register = () => {
         email: formData.email
       }
 
-      navigate('/login', { replace: true, state })
+      navigate('/home', { replace: true, state })
     } catch {
       setError('Registration failed. Please try again.')
     } finally {
@@ -160,7 +163,7 @@ export const Register = () => {
               <div className="input-container">
                 <FaLock className="input-icon" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
                   value={formData.password}
@@ -169,6 +172,15 @@ export const Register = () => {
                   required
                   disabled={isLoading}
                 />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
 
@@ -177,7 +189,7 @@ export const Register = () => {
               <div className="input-container">
                 <FaLock className="input-icon" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -186,6 +198,15 @@ export const Register = () => {
                   required
                   disabled={isLoading}
                 />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={isLoading}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
 
