@@ -20,7 +20,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<WalletTransaction> WalletTransactions =>
         Set<WalletTransaction>();
 
-     public DbSet<Ticket> Tickets => Set<Ticket>();
+    public DbSet<Ticket> Tickets => Set<Ticket>();
+
+    public DbSet<Bus> Buses => Set<Bus>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
@@ -32,6 +34,7 @@ public class ApplicationDbContext : DbContext
         ConfigureWalletTransaction(modelBuilder);
         ConfigureBusRoute(modelBuilder);
         ConfigureTicket(modelBuilder);
+        ConfigureBus(modelBuilder);
     }
 
     private static void ConfigurePassenger(
@@ -239,6 +242,43 @@ public class ApplicationDbContext : DbContext
                 .WithMany(route => route.Tickets)
                 .HasForeignKey(ticket => ticket.BusRouteId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
+    private static void ConfigureBus(
+    ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Bus>(entity =>
+        {
+            entity.HasKey(bus => bus.Id);
+
+            entity.Property(bus => bus.FleetNumber)
+                .HasMaxLength(30)
+                .IsRequired();
+
+            entity.HasIndex(bus => bus.FleetNumber)
+                .IsUnique();
+
+            entity.Property(bus => bus.RegistrationNumber)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.HasIndex(bus => bus.RegistrationNumber)
+                .IsUnique();
+
+            entity.Property(bus => bus.Status)
+                .HasMaxLength(30)
+                .HasDefaultValue("Active")
+                .IsRequired();
+
+            entity.HasIndex(bus => bus.Status);
+
+            entity.HasIndex(bus => bus.BusRouteId);
+
+            entity.HasOne(bus => bus.BusRoute)
+                .WithMany(route => route.Buses)
+                .HasForeignKey(bus => bus.BusRouteId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }
