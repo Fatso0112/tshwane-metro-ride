@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Home } from '../pages/Home/Home'
 import { Login } from '../pages/Login/Login'
 import { Register } from '../pages/Register/Register'
+import { Wallet } from '../pages/Wallet/Wallet'
 
 // ---------- Animation Variants for the Page (single container) ----------
 const pageVariants = {
@@ -124,6 +125,7 @@ export const AppRoutes = () => {
         <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
         <Route path="/login" element={<AnimatedPage><Login /></AnimatedPage>} />
         <Route path="/register" element={<AnimatedPage><Register /></AnimatedPage>} />
+        <Route path="/wallet" element={<AnimatedPage><Wallet /></AnimatedPage>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>

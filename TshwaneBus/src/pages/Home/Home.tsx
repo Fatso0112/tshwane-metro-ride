@@ -6,7 +6,7 @@ export const Home = () => {
 
   const handleLoginClick = () => navigate('/login')
   const handleRegisterClick = () => navigate('/register') 
-  const handleTestClick = () => navigate('/test')
+  const handleWalletClick = () => navigate('/wallet')
 
 
   return (
@@ -21,8 +21,8 @@ export const Home = () => {
           <button onClick={handleRegisterClick} className="btn btn-register" type="button">
             Register
           </button>
-          <button onClick={handleTestClick} className="btn btn-test" type="button">
-            Test
+          <button onClick={handleWalletClick} className="btn btn-test" type="button">
+            Wallet
           </button>
         </div>
       </div>
