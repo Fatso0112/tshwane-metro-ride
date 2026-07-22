@@ -24,6 +24,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Bus> Buses => Set<Bus>();
 
+    public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
     {
@@ -35,6 +37,7 @@ public class ApplicationDbContext : DbContext
         ConfigureBusRoute(modelBuilder);
         ConfigureTicket(modelBuilder);
         ConfigureBus(modelBuilder);
+        ConfigureSupportRequest(modelBuilder);
     }
 
     private static void ConfigurePassenger(
@@ -279,6 +282,43 @@ public class ApplicationDbContext : DbContext
                 .WithMany(route => route.Buses)
                 .HasForeignKey(bus => bus.BusRouteId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+    }
+
+    private static void ConfigureSupportRequest(
+    ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<SupportRequest>(entity =>
+        {
+            entity.HasKey(request => request.Id);
+
+            entity.Property(request => request.Subject)
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.Property(request => request.Message)
+                .HasMaxLength(2000)
+                .IsRequired();
+
+            entity.Property(request => request.Status)
+                .HasMaxLength(30)
+                .HasDefaultValue("Open")
+                .IsRequired();
+
+            entity.HasIndex(request => request.Status);
+
+            entity.HasIndex(request => new
+            {
+                request.PassengerId,
+                request.CreatedAtUtc
+            });
+
+            entity.HasOne(request => request.Passenger)
+                .WithMany(passenger =>
+                    passenger.SupportRequests)
+                .HasForeignKey(request =>
+                    request.PassengerId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

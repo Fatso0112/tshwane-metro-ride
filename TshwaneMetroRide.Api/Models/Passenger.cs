@@ -17,5 +17,8 @@ public class Passenger
     public ICollection<BusCard> BusCards { get; set; } = 
         new List<BusCard>();
 
+    public ICollection<SupportRequest> SupportRequests { get; set; } = 
+        new List<SupportRequest>();
+
     public string Role { get; set; } = "Passenger";
 }
