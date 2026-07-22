@@ -202,44 +202,59 @@
   font-size: 14px;
 }
 
+/* 1. Reset container context */
 .input-container {
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
+  height: auto; /* Reset any bad global heights */
 }
 
+/* 2. Position icons cleanly without layout breakage */
 .input-icon {
   position: absolute;
-  right: 14px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #bbb;
+  color: #888888;
   font-size: 16px;
+  pointer-events: none; 
+  z-index: 5; /* Sit clearly above input backgrounds */
 }
 
+/* 3. Fully Explicit Input Block */
 .input-container input {
   width: 100%;
-  padding: 14px 14px 14px 44px;
+  
+  /* Use explicit heights & padding together safely */
+  height: 48px !important; 
+  padding: 0 14px 0 46px !important; /* Fixed vertical centering, leaves room for icon */
+  line-height: 48px !important;       /* Forces text to render vertically centered */
+  
   border: 1px solid #e5e5e5;
   border-radius: 10px;
   font-size: 14.5px;
-  background: #fafafa;
-  color: #333;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  background-color: #fafafa !important; 
+  color: #111111 !important;            
+  
+  /* Reset variations */
+  text-indent: 0 !important;
+  text-transform: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
-.input-container input::placeholder {
-  color: #bbb;
-}
-
+/* 4. Ensure typing stays visible during active state */
 .input-container input:focus {
   outline: none;
-  border-color: #c726b9;
-  background: white;
-}
-
-.input-container input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  border-color: #7d128d; 
+  background-color: #ffffff !important;
+  color: #111111 !important;
 }
 
 /*BUTTON*/
@@ -328,4 +343,38 @@
     padding: 28px;
     width: 100%;
   }
+}
+
+/* Add safety padding on the right edge so long passwords don't overflow underneath the eye */
+.input-container input[type="password"],
+.input-container input[type="text"] {
+  padding-right: 44px !important;
+}
+
+/* Absolute position layout for registration eye buttons */
+.register-password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  padding: 4px;
+  z-index: 6; /* Ensures it stacks cleanly above the input fields */
+  transition: color 0.2s ease;
+}
+
+.register-password-toggle:hover {
+  color: #7d128d; /* Matches the corporate TshwaneRide branding color tone */
+}
+
+.register-password-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

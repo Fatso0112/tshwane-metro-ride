@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import type {ChangeEvent, SyntheticEvent} from 'react'
+import type { ChangeEvent, SyntheticEvent } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import type { LoginCredentials, LocationState } from '../../types/auth.types'
 import './Login.css'
+/* Import the eye icons */
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 export const Login = () => {
   const navigate = useNavigate()
@@ -16,6 +18,9 @@ export const Login = () => {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  
+  /* State to control password visibility */
+  const [showPassword, setShowPassword] = useState(false)
 
   // Read success message from registration
   useEffect(() => {
@@ -28,9 +33,7 @@ export const Login = () => {
   // Handle input changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    // Update state
     setFormData(prev => ({ ...prev, [name]: value }))
-    // Optional: debug log
     console.log(`${name}:`, value)
   }
 
@@ -48,7 +51,6 @@ export const Login = () => {
     setIsLoading(true)
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
       console.log('Login successful:', formData)
 
@@ -71,7 +73,7 @@ export const Login = () => {
       {/* LEFT: Brand & Image */}
       <div className="login-left">
         <div className="brand-box">
-          <div className="brand-icon">🚌</div>
+          
           <h1 className="brand-title">TshwaneRide</h1>
           <p className="brand-subtitle">CONNECTING THE CAPITAL</p>
           <div className="brand-tagline">
@@ -79,9 +81,7 @@ export const Login = () => {
             <span>tickets and live A Re Yeng journeys.</span>
           </div>
           <div className="brand-features">
-            <span>✓ Sign in</span>
-            <span>✓ Check journey</span>
-            <span>✓ Board</span>
+            
           </div>
         </div>
       </div>
@@ -131,16 +131,28 @@ export const Login = () => {
 
             <div className="input-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="text"   // 👈 Shows password in plain text
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                required
-                disabled={isLoading}
-              />
+              {/* Added a relative container box to position the eye layout */}
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'} /* Dynamic input switching */
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  required
+                  disabled={isLoading}
+                />
+                <button
+                  type="button" /* Crucial: stops the form from submitting on toggle click */
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
 
             <button type="submit" className="login-btn" disabled={isLoading}>

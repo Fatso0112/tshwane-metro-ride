@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Home } from '../pages/Home/Home'
 import { Login } from '../pages/Login/Login'
 import { Register } from '../pages/Register/Register'
-import { Wallet } from '../pages/Wallet/Wallet'
 
 // ---------- Animation Variants for the Page (single container) ----------
 const pageVariants = {
@@ -53,12 +52,12 @@ const blockVariants = {
 }
 
 // A block that covers a third of the page using clip-path
+// ---------- Shatter Blocks (3 vertical blocks) ----------
 const ShatterBlock = ({ children, index }: { children: React.ReactNode; index: number }) => {
-  // Calculate clip-path for each third: left, center, right
   const clipPaths = [
-    'inset(0 66.66% 0 0)',   // left third
+    'inset(0 66.66% 0 0)',      // left third
     'inset(0 33.33% 0 33.33%)', // center third
-    'inset(0 0 0 66.66%)',   // right third
+    'inset(0 0 0 66.66%)',      // right third
   ]
 
   return (
@@ -72,17 +71,16 @@ const ShatterBlock = ({ children, index }: { children: React.ReactNode; index: n
         width: '100%',
         height: '100%',
         clipPath: clipPaths[index],
-        // To avoid overlapping issues, we set pointer-events: none during transition
-        pointerEvents: 'none',
+        pointerEvents: 'none', // ✅ CRUCIAL: Mouse clicks completely ignore this block
+        userSelect: 'none',    // ✅ Prevents text highlights from breaking
         zIndex: 10,
-        // Slight background tint to enhance the shatter effect (optional)
         background: `rgba(255,255,255,${index === 1 ? 0.05 : 0})`,
       }}
     >
-      {/* We render the children (page content) inside each block, but clipped */}
-      {/* To avoid duplication of interactive elements, we only render content on the center block? */}
-      {/* For simplicity, we'll render children in all, but they are clipped, so it's okay */}
-      {children}
+      {/* Wrap children to force everything inside the animation block to be non-interactive */}
+      <div style={{ pointerEvents: 'none', userSelect: 'none' }}>
+        {children}
+      </div>
     </motion.div>
   )
 }
@@ -103,10 +101,12 @@ const AnimatedPage = ({ children }: { children: React.ReactNode }) => {
         overflow: 'hidden',
       }}
     >
-      {/* The actual page content (will be duplicated inside blocks) */}
-      <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
+      {/* ✅ The interactive page layer has standard pointer events and a higher z-index */}
+      <div style={{ position: 'relative', zIndex: 20, pointerEvents: 'auto' }}>
+        {children}
+      </div>
 
-      {/* Three shatter blocks overlay – they will cover the same area but with clip-path */}
+      {/* Three shatter blocks overlay – strictly visual decorations now */}
       {[0, 1, 2].map((i) => (
         <ShatterBlock key={i} index={i}>
           {children}
@@ -115,6 +115,7 @@ const AnimatedPage = ({ children }: { children: React.ReactNode }) => {
     </motion.div>
   )
 }
+
 
 export const AppRoutes = () => {
   const location = useLocation()
@@ -125,7 +126,6 @@ export const AppRoutes = () => {
         <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
         <Route path="/login" element={<AnimatedPage><Login /></AnimatedPage>} />
         <Route path="/register" element={<AnimatedPage><Register /></AnimatedPage>} />
-        <Route path="/wallet" element={<AnimatedPage><Wallet /></AnimatedPage>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
