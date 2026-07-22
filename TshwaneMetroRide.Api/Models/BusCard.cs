@@ -19,6 +19,12 @@ public class BusCard
     public ICollection<WalletTransaction> Transactions { get; set; } = 
         new List<WalletTransaction>();
 
+    public string Status { get; set; } = "Active";
+
+    public DateTime? BlockedAtUtc { get; set; }
+
+    public DateTime? CancelledAtUtc { get; set; }
+
     public ICollection<Ticket> Tickets { get; set; } = 
         new List<Ticket>();
 }

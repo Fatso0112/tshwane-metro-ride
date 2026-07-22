@@ -81,6 +81,11 @@ public class ApplicationDbContext : DbContext
             entity.Property(card => card.IsActive)
                 .HasDefaultValue(true);
 
+            entity.Property(card => card.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Active")
+                .IsRequired();
+
             entity.HasOne(card => card.Passenger)
                 .WithMany(passenger => passenger.BusCards)
                 .HasForeignKey(card => card.PassengerId)

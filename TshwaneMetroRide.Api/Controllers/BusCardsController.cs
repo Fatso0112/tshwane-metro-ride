@@ -69,6 +69,7 @@ public class BusCardsController : ControllerBase
             CardNumber = normalizedCardNumber,
             Balance = 0.00m,
             IsActive = true,
+            Status = "Active",
             LinkedAtUtc = DateTime.UtcNow,
             PassengerId = passengerId.Value
         };
@@ -87,6 +88,7 @@ public class BusCardsController : ControllerBase
                     busCard.CardNumber,
                     busCard.Balance,
                     busCard.IsActive,
+                    busCard.Status,
                     busCard.LinkedAtUtc
                 }
             });
@@ -116,7 +118,10 @@ public class BusCardsController : ControllerBase
                 card.CardNumber,
                 card.Balance,
                 card.IsActive,
-                card.LinkedAtUtc
+                card.LinkedAtUtc,
+                card.Status,
+                card.BlockedAtUtc,
+                card.CancelledAtUtc
             })
             .ToListAsync();
 
@@ -138,5 +143,193 @@ public class BusCardsController : ControllerBase
             out var passengerId)
             ? passengerId
             : null;
+    }
+
+    [HttpPost("{cardId:int}/block")]
+    public async Task<IActionResult> BlockCard(int cardId)
+    {
+        var passengerId = GetPassengerId();
+
+        if (passengerId is null)
+        {
+            return Unauthorized(new
+            {
+                message = "The access token is invalid."
+            });
+        }
+
+        var card = await _context.BusCards
+            .SingleOrDefaultAsync(card =>
+                card.Id == cardId &&
+                card.PassengerId == passengerId.Value);
+
+        if (card is null)
+        {
+            return NotFound(new
+            {
+                message =
+                    "The bus card was not found for this passenger."
+            });
+        }
+
+        if (card.Status == "Cancelled")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "A cancelled card cannot be blocked."
+            });
+        }
+
+        if (card.Status == "Blocked")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "This bus card is already blocked."
+            });
+        }
+
+        card.Status = "Blocked";
+        card.IsActive = false;
+        card.BlockedAtUtc = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Bus card blocked successfully.",
+
+            busCard = new
+            {
+                card.Id,
+                card.CardNumber,
+                card.Status,
+                card.IsActive,
+                card.BlockedAtUtc
+            }
+        });
+    }
+
+    [HttpPost("{cardId:int}/reactivate")]
+    public async Task<IActionResult> ReactivateCard(int cardId)
+    {
+        var passengerId = GetPassengerId();
+
+        if (passengerId is null)
+        {
+            return Unauthorized(new
+            {
+                message = "The access token is invalid."
+            });
+        }
+
+        var card = await _context.BusCards
+            .SingleOrDefaultAsync(card =>
+                card.Id == cardId &&
+                card.PassengerId == passengerId.Value);
+
+        if (card is null)
+        {
+            return NotFound(new
+            {
+                message =
+                    "The bus card was not found for this passenger."
+            });
+        }
+
+        if (card.Status == "Cancelled")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "A cancelled card cannot be reactivated."
+            });
+        }
+
+        if (card.Status == "Active")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "This bus card is already active."
+            });
+        }
+
+        card.Status = "Active";
+        card.IsActive = true;
+        card.BlockedAtUtc = null;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Bus card reactivated successfully.",
+
+            busCard = new
+            {
+                card.Id,
+                card.CardNumber,
+                card.Status,
+                card.IsActive
+            }
+        });
+    }
+
+    [HttpPost("{cardId:int}/cancel")]
+    public async Task<IActionResult> CancelCard(int cardId)
+    {
+        var passengerId = GetPassengerId();
+
+        if (passengerId is null)
+        {
+            return Unauthorized(new
+            {
+                message = "The access token is invalid."
+            });
+        }
+
+        var card = await _context.BusCards
+            .SingleOrDefaultAsync(card =>
+                card.Id == cardId &&
+                card.PassengerId == passengerId.Value);
+
+        if (card is null)
+        {
+            return NotFound(new
+            {
+                message =
+                    "The bus card was not found for this passenger."
+            });
+        }
+
+        if (card.Status == "Cancelled")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "This bus card is already cancelled."
+            });
+        }
+
+        card.Status = "Cancelled";
+        card.IsActive = false;
+        card.CancelledAtUtc = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Bus card cancelled successfully.",
+
+            busCard = new
+            {
+                card.Id,
+                card.CardNumber,
+                card.Status,
+                card.IsActive,
+                card.CancelledAtUtc
+            }
+        });
     }
 }
