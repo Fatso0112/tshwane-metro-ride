@@ -1,8 +1,12 @@
+
 import { useState } from 'react'
-import type  {ChangeEvent, SyntheticEvent} from 'react'
+import type { ChangeEvent, SyntheticEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import type { RegisterData, LocationState } from '../../types/auth.types'
 import './Register.css'
+import { FaUser, FaEnvelope, FaPhone, FaLock } from 'react-icons/fa'
+import busImage from '../../asset/busImage.jpeg'
+import logo from '../../asset/logo.png'
 
 export const Register = () => {
   const navigate = useNavigate()
@@ -10,14 +14,12 @@ export const Register = () => {
   const [formData, setFormData] = useState<RegisterData>({
     name: '',
     email: '',
-    phone: '',
+    numberPhone: '',
     password: '',
     confirmPassword: ''
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -25,7 +27,7 @@ export const Register = () => {
   }
 
   const validateForm = (): boolean => {
-    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
+    if (!formData.name || !formData.email || !formData.numberPhone || !formData.password) {
       setError('Please fill in all fields')
       return false
     }
@@ -33,12 +35,8 @@ export const Register = () => {
       setError('Passwords do not match')
       return false
     }
-    if (formData.password.length < 10) {
-      setError('Password must be at least 10 characters')
-      return false
-    }
-    if (!/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/.test(formData.password)) {
-      setError('Password must contain a letter, number, and symbol')
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters')
       return false
     }
     return true
@@ -56,7 +54,7 @@ export const Register = () => {
       console.log('Registration successful:', formData)
 
       const state: LocationState = {
-        message: '✅ Account created! Please login with your credentials.',
+        message: '✅ Registration successful! Please login with your credentials.',
         email: formData.email
       }
 
@@ -69,96 +67,117 @@ export const Register = () => {
   }
 
   return (
-    <div className="register-container">
-      <div className="register-overlay"></div>
-      <div className="register-card">
-        <div className="register-header">
-          <h1 className="app-title">TshwaneRide</h1>
-          <p className="app-subtitle">CITY OF TSHWANE DIGITAL TICKETING</p>
+    <div className="register-page">
+      <div className="left-section">
+        <div className="logo">
+          <img src={logo} className="logo-icon-img" alt="TshwaneLogo"/>
+          <h2>TshwaneRide</h2>
+        </div>
+        <p className="tagline">CITY OF TSHWANE DIGITAL TICKETING</p>
+        <h1>One account for your Connector, tickets and journeys.</h1>
+        <p>Create an account, link your physical Connector and travel with a secure on-screen token.</p>
+
+        <div className="steps">
+          <div className="step">
+            <div className="step-dot active"></div>
+            <span className="step-label">Create account</span>
+          </div>
+          <div className="step">
+            <div className="step-dot"></div>
+            <span className="step-label">Link Connector</span>
+          </div>
+          <div className="step">
+            <div className="step-dot"></div>
+            <span className="step-label">Ready to travel</span>
+          </div>
         </div>
 
-        <div className="register-content">
-          <h2>Create your account</h2>
-          <p className="register-description">
-            Register to manage your Connector, wallet and journeys.
-          </p>
+        <img src={busImage} className="bus-image" alt="Tshwane buses" />
+      </div>
+
+      <div className="right-section">
+        <div className="register-card">
+          <p className="brand">TSHWANERIDE</p>
+          <h2>Create Account</h2>
+          <p className="subtitle">Register to manage your connector, wallet and journeys.</p>
 
           {error && <div className="error-message">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Full name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Email address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="phone">Phone number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Enter your phone number"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="form-group password-group">
-              <label htmlFor="password">Create password</label>
-              <div className="password-input-wrapper">
+              <label htmlFor="name">Full Name</label>
+              <div className="input-container">
+                <FaUser className="input-icon" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <div className="input-container">
+                <FaEnvelope className="input-icon" />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="numberPhone">Phone Number</label>
+              <div className="input-container">
+                <FaPhone className="input-icon" />
+                <input
+                  type="tel"
+                  id="numberPhone"
+                  name="numberPhone"
+                  value={formData.numberPhone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <div className="input-container">
+                <FaLock className="input-icon" />
+                <input
+                  type="password"
                   id="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="At least 10 characters"
+                  placeholder="Create a password (min 8 characters)"
                   required
                   disabled={isLoading}
                 />
-                <button
-                  type="button"
-                  className="toggle-password"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? '🙈' : '👁️'}
-                </button>
               </div>
-              <p className="password-hint">
-                Use 10+ characters with a number and symbol.
-              </p>
             </div>
 
-            <div className="form-group password-group">
-              <label htmlFor="confirmPassword">Confirm password</label>
-              <div className="password-input-wrapper">
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <div className="input-container">
+                <FaLock className="input-icon" />
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type="password"
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -167,23 +186,16 @@ export const Register = () => {
                   required
                   disabled={isLoading}
                 />
-                <button
-                  type="button"
-                  className="toggle-password"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? '🙈' : '👁️'}
-                </button>
               </div>
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
           <p className="auth-redirect">
-            Already have an account? <Link to="/login">Log in</Link>
+            Already have an account? <Link to="/login">Log In</Link>
           </p>
         </div>
       </div>

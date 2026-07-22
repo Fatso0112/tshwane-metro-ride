@@ -1,84 +1,265 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* src/pages/Register/Register.css */
-.register-container {
+.register-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+/*LEFT SECTION*/
+.left-section {
+  flex: 0.85;
+  background: linear-gradient(180deg, #7d128d, #9b35b2);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 48px 60px 0 48px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.logo-icon-img {
+  width: 68px;
+  height: 68px;
+  border-radius: 10px;
+  object-fit: contain;
+  display: block;
+}
+
+.left-section h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.tagline {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(59, 238, 36, 0.801);
+  margin-bottom: 24px;
+}
+
+.left-section h1 {
+  font-size: 42px;
+  line-height: 1.12;
+  font-weight: 700;
+  margin-bottom: 20px;
+  max-width: 380px;
+  letter-spacing: -0.5px;
+}
+
+.left-section > p:not(.tagline) {
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 360px;
+  margin-bottom: 8px;
+}
+
+/* Steps */
+.steps {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 26px;
+  width: 2px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.step-dot.active {
+  background: #06d121;
+  border-color: #06d121;
+}
+
+.step-dot.active::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  letter-spacing: 0.2px;
+}
+
+/* Bus image */
+.bus-image {
+  width: 92%;
+  height: 220px;           
+  border-radius: 14px;
+  margin-top: 32px;        
+  margin-bottom: 32px;
+  object-fit: cover;       
+  object-position: center;  
+  display: block;
+  align-self: flex-start;
+}
+
+/*RIGHT SECTION*/
+.right-section {
+  flex: 1.15;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem;
+  background: #f5f5f5;
+  padding: 40px;
+  min-width: 0;
 }
 
 .register-card {
   background: white;
-  padding: 2.5rem;
+  padding: 44px 48px;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  width: 480px;
+  max-width: 100%;
+}
+
+.brand {
+  color: #c726b9;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
 }
 
 .register-card h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
+  text-align: left;
+  font-size: 30px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
 }
 
 .subtitle {
-  text-align: center;
-  color: #666;
-  margin-bottom: 2rem;
+  text-align: left;
+  color: #999;
+  margin-bottom: 32px;
+  font-size: 14.5px;
+  line-height: 1.45;
 }
 
+/*FORM*/
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-weight: 500;
+  margin-bottom: 7px;
+  color: #444;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.form-group input {
+.input-container {
+  position: relative;
   width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
+}
+
+.input-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bbb;
+  font-size: 16px;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 14px 14px 14px 44px;
+  border: 1px solid #e5e5e5;
   border-radius: 10px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box;
+  font-size: 14.5px;
+  background: #fafafa;
+  color: #333;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.form-group input:focus {
+.input-container input::placeholder {
+  color: #bbb;
+}
+
+.input-container input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #c726b9;
+  background: white;
 }
 
-.form-group input:disabled {
+.input-container input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
+/*BUTTON*/
 .btn-primary {
   width: 100%;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 15px;
+  background-color: #06a84a;
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  
+  transition: background-color 0.2s ease;
+  margin-top: 14px;
+  letter-spacing: 0.2px;
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  background-color: #058a3d;
 }
 
 .btn-primary:disabled {
@@ -86,27 +267,65 @@
   cursor: not-allowed;
 }
 
+/*ERROR*/
 .error-message {
   background: #fee;
   color: #c33;
-  padding: 0.75rem;
+  padding: 12px;
   border-radius: 10px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  margin-bottom: 16px;
+  font-size: 13px;
 }
 
+/*REDIRECT*/
 .auth-redirect {
   text-align: center;
-  margin-top: 1.5rem;
-  color: #666;
+  margin-top: 24px;
+  color: #999;
+  font-size: 14px;
 }
 
 .auth-redirect a {
-  color: #667eea;
+  color: #7d128d;
   text-decoration: none;
   font-weight: 600;
+  margin-left: 4px;
 }
 
 .auth-redirect a:hover {
   text-decoration: underline;
+}
+
+/*RESPONSIVE*/
+@media (max-width: 900px) {
+  .register-page {
+    flex-direction: column;
+  }
+
+  .left-section {
+    padding: 36px 28px 0 28px;
+    min-height: auto;
+  }
+
+  .left-section h1 {
+    font-size: 28px;
+    max-width: none;
+  }
+
+  .steps {
+    margin-top: 24px;
+  }
+
+  .bus-image {
+    display: none;
+  }
+
+  .right-section {
+    padding: 28px 20px;
+  }
+
+  .register-card {
+    padding: 28px;
+    width: 100%;
+  }
 }
