@@ -20,4 +20,7 @@ public class BusRoute
 
     public ICollection<Ticket> Tickets { get; set; } = 
         new List<Ticket>();
+
+    public ICollection<Bus> Buses { get; set; } =
+    new List<Bus>();
 }
