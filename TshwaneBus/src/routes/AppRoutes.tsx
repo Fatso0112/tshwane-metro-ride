@@ -2,7 +2,6 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Home } from '../pages/Home/Home'
 import { Login } from '../pages/Login/Login'
-import { Test } from '../pages/Test/Test'
 import { Register } from '../pages/Register/Register'
 
 // ---------- Animation Variants for the Page (single container) ----------
@@ -125,7 +124,6 @@ export const AppRoutes = () => {
         <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
         <Route path="/login" element={<AnimatedPage><Login /></AnimatedPage>} />
         <Route path="/register" element={<AnimatedPage><Register /></AnimatedPage>} />
-           <Route path="/test" element={<AnimatedPage><Test /></AnimatedPage>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>

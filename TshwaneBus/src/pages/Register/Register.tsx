@@ -5,8 +5,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import type { RegisterData, LocationState } from '../../types/auth.types'
 import './Register.css'
 import { FaUser, FaEnvelope, FaPhone, FaLock } from 'react-icons/fa'
-import busImage from '../../asset/busImage.jpeg'
-import logo from '../../asset/logo.png'
+import busImage from '../../assets/busImage.jpeg'
+import logo from '../../assets/logo.png'
 
 export const Register = () => {
   const navigate = useNavigate()
