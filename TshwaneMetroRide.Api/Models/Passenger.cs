@@ -12,6 +12,8 @@ public class Passenger
 
     public required string PasswordHash { get; set; }
 
+    public TravelWallet? TravelWallet { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<BusCard> BusCards { get; set; } = 

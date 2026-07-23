@@ -53,14 +53,20 @@ public class AuthController : ControllerBase
         var passenger = new Passenger
         {
             FullName = request.FullName.Trim(),
-            Email = normalizedEmail,
+            Email = request.Email.Trim().ToLowerInvariant(),
             PhoneNumber =
                 string.IsNullOrWhiteSpace(
                     request.PhoneNumber)
                     ? null
                     : request.PhoneNumber.Trim(),
             PasswordHash = string.Empty,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            TravelWallet = new TravelWallet
+            {
+                Balance = 0.00m,
+                Status = "Active",
+                CreatedAtUtc = DateTime.UtcNow
+            }
         };
 
         passenger.PasswordHash =

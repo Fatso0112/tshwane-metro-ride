@@ -25,6 +25,10 @@ public class BusCard
 
     public DateTime? CancelledAtUtc { get; set; }
 
+    public int? TravelWalletId { get; set; }
+
+    public TravelWallet? TravelWallet { get; set; }
+
     public ICollection<Ticket> Tickets { get; set; } = 
         new List<Ticket>();
 }

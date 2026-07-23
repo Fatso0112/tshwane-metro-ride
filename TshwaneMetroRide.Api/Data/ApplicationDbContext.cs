@@ -24,6 +24,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Bus> Buses => Set<Bus>();
 
+    public DbSet<TravelWallet> TravelWallets => Set<TravelWallet>();
+
     public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
 
     protected override void OnModelCreating(
@@ -38,6 +40,7 @@ public class ApplicationDbContext : DbContext
         ConfigureTicket(modelBuilder);
         ConfigureBus(modelBuilder);
         ConfigureSupportRequest(modelBuilder);
+        ConfigureTravelWallet(modelBuilder);
     }
 
     private static void ConfigurePassenger(
@@ -319,6 +322,48 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(request =>
                     request.PassengerId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureTravelWallet(
+    ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TravelWallet>(entity =>
+        {
+            entity.HasKey(wallet => wallet.Id);
+
+            entity.Property(wallet => wallet.Balance)
+                .HasPrecision(12, 2);
+
+            entity.Property(wallet => wallet.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Active")
+                .IsRequired();
+
+            entity.HasIndex(wallet => wallet.PassengerId)
+                .IsUnique();
+
+            entity.HasIndex(wallet => wallet.Status);
+
+            entity.HasOne(wallet => wallet.Passenger)
+                .WithOne(passenger =>
+                    passenger.TravelWallet)
+                .HasForeignKey<TravelWallet>(
+                    wallet => wallet.PassengerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(wallet => wallet.BusCards)
+                .WithOne(card => card.TravelWallet)
+                .HasForeignKey(card =>
+                    card.TravelWalletId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(wallet => wallet.Transactions)
+                .WithOne(transaction =>
+                    transaction.TravelWallet)
+                .HasForeignKey(transaction =>
+                    transaction.TravelWalletId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
