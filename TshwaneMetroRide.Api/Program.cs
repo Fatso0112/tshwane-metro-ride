@@ -8,6 +8,9 @@ using TshwaneMetroRide.Api.Data;
 using TshwaneMetroRide.Api.Interfaces;
 using TshwaneMetroRide.Api.Models;
 using TshwaneMetroRide.Api.Services;
+using TshwaneMetroRide.Api.Options;
+using TshwaneMetroRide.Api.Services.Email;
+using TshwaneMetroRide.Api.Services.Otp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +114,20 @@ builder.Services.AddSwaggerGen(options =>
             }
         });
 });
+
+builder.Services.Configure<SmtpOptions>(
+    builder.Configuration.GetSection(
+        SmtpOptions.SectionName));
+
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+builder.Services.Configure<OtpOptions>(
+    builder.Configuration.GetSection(
+        OtpOptions.SectionName));
+
+builder.Services.AddScoped<
+    IEmailOtpService,
+    EmailOtpService>();
 
 var app = builder.Build();
 

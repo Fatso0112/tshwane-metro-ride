@@ -23,4 +23,12 @@ public class Passenger
         new List<SupportRequest>();
 
     public string Role { get; set; } = "Passenger";
+
+    public bool IsEmailVerified { get; set; } = false;
+
+    public DateTime? EmailVerifiedAtUtc { get; set; }
+
+    public ICollection<EmailOtpVerification>
+        EmailOtpVerifications { get; set; } =
+            new List<EmailOtpVerification>();
 }

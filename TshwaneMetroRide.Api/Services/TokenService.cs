@@ -53,6 +53,12 @@ public class TokenService : ITokenServices
                 passenger.Email),
 
             new(
+                "email_verified",
+                passenger.IsEmailVerified
+                    ? "true"
+                    : "false"),
+
+            new(
                 JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
         };
