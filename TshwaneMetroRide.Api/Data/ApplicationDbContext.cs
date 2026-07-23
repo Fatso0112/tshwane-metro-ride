@@ -28,6 +28,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
 
+    public DbSet<EmailOtpVerification> EmailOtpVerifications => Set<EmailOtpVerification>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
     {
@@ -41,6 +43,7 @@ public class ApplicationDbContext : DbContext
         ConfigureBus(modelBuilder);
         ConfigureSupportRequest(modelBuilder);
         ConfigureTravelWallet(modelBuilder);
+        ConfigureEmailOtpVerification(modelBuilder);
     }
 
     private static void ConfigurePassenger(
@@ -67,6 +70,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(passenger => passenger.PasswordHash)
                 .HasMaxLength(500)
                 .IsRequired();
+
+            entity.Property(passenger => passenger.IsEmailVerified)
+                .HasDefaultValue(false);
         });
     }
 
@@ -364,6 +370,50 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(transaction =>
                     transaction.TravelWalletId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
+    private static void ConfigureEmailOtpVerification(
+    ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<EmailOtpVerification>(entity =>
+        {
+            entity.HasKey(verification =>
+                verification.Id);
+
+            entity.HasIndex(verification =>
+                    verification.VerificationId)
+                .IsUnique();
+
+            entity.Property(verification =>
+                    verification.OtpHash)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(verification =>
+                    verification.Purpose)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.HasIndex(verification => new
+            {
+                verification.PassengerId,
+                verification.CreatedAtUtc
+            });
+
+            entity.HasIndex(verification => new
+            {
+                verification.PassengerId,
+                verification.IsUsed
+            });
+
+            entity.HasOne(verification =>
+                    verification.Passenger)
+                .WithMany(passenger =>
+                    passenger.EmailOtpVerifications)
+                .HasForeignKey(verification =>
+                    verification.PassengerId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
