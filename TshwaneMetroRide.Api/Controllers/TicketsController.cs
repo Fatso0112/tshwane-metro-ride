@@ -41,6 +41,7 @@ public class TicketsController : ControllerBase
                 IsolationLevel.Serializable);
 
         var busCard = await _context.BusCards
+            .Include(card => card.TravelWallet)
             .SingleOrDefaultAsync(card =>
                 card.Id == request.CardId &&
                 card.PassengerId == passengerId.Value);
@@ -60,6 +61,24 @@ public class TicketsController : ControllerBase
             {
                 message =
                     "The selected bus card is inactive."
+            });
+        }
+
+        if (busCard.TravelWallet is null)
+        {
+            return BadRequest(new
+            {
+                message =
+                    "The selected bus card does not have an associated travel wallet."
+            });
+        }
+
+        if (busCard.TravelWallet.Status != "Active")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "The travel wallet associated with the selected bus card is not active."
             });
         }
 
@@ -95,7 +114,7 @@ public class TicketsController : ControllerBase
             });
         }
 
-        if (busCard.Balance < route.FareAmount)
+        if (busCard.TravelWallet.Balance < route.FareAmount)
         {
             return BadRequest(new
             {
@@ -103,7 +122,7 @@ public class TicketsController : ControllerBase
                     "The bus card has insufficient funds.",
 
                 requiredAmount = route.FareAmount,
-                availableBalance = busCard.Balance
+                availableBalance = busCard.TravelWallet.Balance
             });
         }
 
@@ -122,7 +141,8 @@ public class TicketsController : ControllerBase
             $"TMR|{ticketNumber}|{route.RouteCode}|" +
             $"{uniqueValue}";
 
-        busCard.Balance -= route.FareAmount;
+        busCard.TravelWallet.Balance -= route.FareAmount;
+        busCard.TravelWallet.UpdatedAtUtc = purchasedAtUtc;
 
         var ticket = new Ticket
         {
@@ -153,9 +173,10 @@ public class TicketsController : ControllerBase
                 Amount = -route.FareAmount,
                 TransactionType = "TicketPurchase",
                 Reference = ticketNumber,
-                BalanceAfter = busCard.Balance,
+                BalanceAfter = busCard.TravelWallet.Balance,
                 CreatedAtUtc = purchasedAtUtc,
-                BusCardId = busCard.Id
+                BusCardId = busCard.Id,
+                TravelWalletId = busCard.TravelWallet.Id
             };
 
         _context.Tickets.Add(ticket);
@@ -197,7 +218,7 @@ public class TicketsController : ControllerBase
             {
                 busCard.Id,
                 busCard.CardNumber,
-                busCard.Balance
+                busCard.TravelWallet.Balance
             }
         });
     }

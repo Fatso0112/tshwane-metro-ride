@@ -62,6 +62,7 @@ public class WalletController : ControllerBase
             await _context.Database.BeginTransactionAsync();
 
         var busCard = await _context.BusCards
+            .Include(card => card.TravelWallet)
             .SingleOrDefaultAsync(card =>
                 card.Id == cardId &&
                 card.PassengerId == passengerId.Value);
@@ -75,7 +76,7 @@ public class WalletController : ControllerBase
             });
         }
 
-        if (!busCard.IsActive)
+        if (!busCard.IsActive || busCard.Status != "Active")
         {
             return BadRequest(new
             {
@@ -84,7 +85,26 @@ public class WalletController : ControllerBase
             });
         }
 
-        busCard.Balance += amount;
+        if (busCard.TravelWallet is null)
+        {
+            return BadRequest(new
+            {
+                message =
+                    "This bus card does not have an associated travel wallet."
+            });
+        }
+
+        if (busCard.TravelWallet.Status != "Active")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "The associated travel wallet is inactive and cannot be topped up."
+            });
+        }
+
+        busCard.TravelWallet.Balance += request.Amount;
+        busCard.TravelWallet.UpdatedAtUtc = DateTime.UtcNow;
 
         var reference =
             $"TMR-{DateTime.UtcNow:yyyyMMddHHmmss}-" +
@@ -92,12 +112,13 @@ public class WalletController : ControllerBase
 
         var walletTransaction = new WalletTransaction
         {
-            Amount = amount,
+            Amount = request.Amount,
             TransactionType = "TopUp",
             Reference = reference,
-            BalanceAfter = busCard.Balance,
+            BalanceAfter = busCard.TravelWallet.Balance,
             CreatedAtUtc = DateTime.UtcNow,
-            BusCardId = busCard.Id
+            BusCardId = busCard.Id,
+            TravelWalletId = busCard.TravelWallet.Id
         };
 
         _context.WalletTransactions.Add(walletTransaction);
@@ -123,7 +144,9 @@ public class WalletController : ControllerBase
             {
                 busCard.Id,
                 busCard.CardNumber,
-                busCard.Balance
+                busCard.TravelWallet!.Balance,
+                travelWalletId = busCard.TravelWallet.Id,
+                walletStatus = busCard.TravelWallet.Status
             }
         });
     }
@@ -144,16 +167,9 @@ public class WalletController : ControllerBase
 
         var busCard = await _context.BusCards
             .AsNoTracking()
-            .Where(card =>
+            .SingleOrDefaultAsync(card =>
                 card.Id == cardId &&
-                card.PassengerId == passengerId.Value)
-            .Select(card => new
-            {
-                card.Id,
-                card.CardNumber,
-                card.Balance
-            })
-            .SingleOrDefaultAsync();
+                card.PassengerId == passengerId.Value);
 
         if (busCard is null)
         {
@@ -164,11 +180,20 @@ public class WalletController : ControllerBase
             });
         }
 
+        if (!busCard.TravelWalletId.HasValue)
+        {
+            return BadRequest(new
+            {
+                message =
+                    "This bus card does not have an associated travel wallet."
+            });
+        }
+
         var transactions =
             await _context.WalletTransactions
                 .AsNoTracking()
                 .Where(transaction =>
-                    transaction.BusCardId == cardId)
+                    transaction.TravelWalletId == busCard.TravelWalletId.Value)
                 .OrderByDescending(transaction =>
                     transaction.CreatedAtUtc)
                 .Select(transaction => new
@@ -178,7 +203,8 @@ public class WalletController : ControllerBase
                     transaction.TransactionType,
                     transaction.Amount,
                     transaction.BalanceAfter,
-                    transaction.CreatedAtUtc
+                    transaction.CreatedAtUtc,
+                    transaction.BusCardId
                 })
                 .ToListAsync();
 
@@ -188,6 +214,53 @@ public class WalletController : ControllerBase
             count = transactions.Count,
             transactions
         });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyWallet()
+    {
+        var passengerId = GetPassengerId();
+
+        if (passengerId is null)
+        {
+            return Unauthorized(new
+            {
+                message = "The access token is invalid."
+            });
+        }
+
+        var wallet = await _context.TravelWallets
+            .AsNoTracking()
+            .Where(wallet =>
+                wallet.PassengerId == passengerId.Value)
+            .Select(wallet => new
+            {
+                wallet.Id,
+                wallet.Balance,
+                wallet.Status,
+                wallet.CreatedAtUtc,
+                wallet.UpdatedAtUtc,
+
+                cards = wallet.BusCards.Select(card => new
+                {
+                    card.Id,
+                    card.CardNumber,
+                    card.Status,
+                    card.IsActive,
+                    card.LinkedAtUtc
+                })
+            })
+            .SingleOrDefaultAsync();
+
+        if (wallet is null)
+        {
+            return NotFound(new
+            {
+                message = "Travel wallet not found."
+            });
+        }
+
+        return Ok(wallet);
     }
 
     private int? GetPassengerId()

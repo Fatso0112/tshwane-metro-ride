@@ -18,4 +18,8 @@ public class WalletTransaction
     public int BusCardId { get; set; }
 
     public BusCard BusCard { get; set; } = null!;
+
+    public int? TravelWalletId { get; set; }
+
+    public TravelWallet? TravelWallet { get; set; }
 }

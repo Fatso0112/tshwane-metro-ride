@@ -52,11 +52,12 @@ public class BusCardsController : ControllerBase
             });
         }
 
-        var passengerExists = await _context.Passengers
-            .AnyAsync(passenger =>
+        var passenger = await _context.Passengers
+            .Include(passenger => passenger.TravelWallet)
+            .SingleOrDefaultAsync(passenger =>
                 passenger.Id == passengerId.Value);
 
-        if (!passengerExists)
+        if (passenger is null)
         {
             return NotFound(new
             {
@@ -64,17 +65,43 @@ public class BusCardsController : ControllerBase
             });
         }
 
+        // Existing passengers may not yet have a wallet.
+        if (passenger.TravelWallet is null)
+        {
+            passenger.TravelWallet = new TravelWallet
+            {
+                Balance = 0.00m,
+                Status = "Active",
+                CreatedAtUtc = DateTime.UtcNow
+            };
+        }
+
+        if (passenger.TravelWallet.Status != "Active")
+        {
+            return BadRequest(new
+            {
+                message =
+                    "A bus card cannot be linked because the travel wallet is not active."
+            });
+        }
+
         var busCard = new BusCard
         {
             CardNumber = normalizedCardNumber,
+
+            // Temporary legacy balance.
+            // The shared wallet balance is now used.
             Balance = 0.00m,
+
             IsActive = true,
             Status = "Active",
             LinkedAtUtc = DateTime.UtcNow,
-            PassengerId = passengerId.Value
+            PassengerId = passenger.Id,
+            TravelWallet = passenger.TravelWallet
         };
 
         _context.BusCards.Add(busCard);
+
         await _context.SaveChangesAsync();
 
         return Created(
@@ -82,11 +109,23 @@ public class BusCardsController : ControllerBase
             new
             {
                 message = "Bus card linked successfully.",
+
                 busCard = new
                 {
                     busCard.Id,
                     busCard.CardNumber,
-                    busCard.Balance,
+
+                    // Return the shared wallet balance,
+                    // not the legacy card balance.
+                    balance =
+                        passenger.TravelWallet.Balance,
+
+                    travelWalletId =
+                        passenger.TravelWallet.Id,
+
+                    walletStatus =
+                        passenger.TravelWallet.Status,
+
                     busCard.IsActive,
                     busCard.Status,
                     busCard.LinkedAtUtc
@@ -116,7 +155,13 @@ public class BusCardsController : ControllerBase
             {
                 card.Id,
                 card.CardNumber,
-                card.Balance,
+                balance = card.TravelWallet != null
+                    ? card.TravelWallet.Balance
+                    : card.Balance,
+                card.TravelWalletId,
+                walletStatus = card.TravelWallet != null
+                    ? card.TravelWallet.Status
+                    : null,
                 card.IsActive,
                 card.LinkedAtUtc,
                 card.Status,
