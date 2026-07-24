@@ -12,6 +12,8 @@ public class WalletTransaction
 
     public decimal BalanceAfter { get; set; }
 
+    public string? PaymentMethod { get; set; }
+
     public DateTime CreatedAtUtc { get; set; } =
         DateTime.UtcNow;
 

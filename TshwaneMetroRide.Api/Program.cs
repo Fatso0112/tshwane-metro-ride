@@ -8,6 +8,9 @@ using TshwaneMetroRide.Api.Data;
 using TshwaneMetroRide.Api.Interfaces;
 using TshwaneMetroRide.Api.Models;
 using TshwaneMetroRide.Api.Services;
+using TshwaneMetroRide.Api.Options;
+using TshwaneMetroRide.Api.Services.Email;
+using TshwaneMetroRide.Api.Services.Otp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,23 @@ var jwtIssuer = builder.Configuration["Jwt:Issuer"]
 var jwtAudience = builder.Configuration["Jwt:Audience"]
     ?? throw new InvalidOperationException(
         "The JWT audience is missing.");
+
+const string FrontendCorsPolicy = "FrontendCorsPolicy";
+
+var corsOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? ["http://localhost:5173"];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(FrontendCorsPolicy, policy =>
+    {
+        policy
+            .WithOrigins(corsOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options =>
@@ -112,6 +132,11 @@ builder.Services.AddSwaggerGen(options =>
         });
 });
 
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection(SmtpOptions.SectionName));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<OtpOptions>(builder.Configuration.GetSection(OtpOptions.SectionName));
+builder.Services.AddScoped<IEmailOtpService, EmailOtpService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -121,6 +146,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(FrontendCorsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();

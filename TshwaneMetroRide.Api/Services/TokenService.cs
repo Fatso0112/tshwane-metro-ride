@@ -53,10 +53,19 @@ public class TokenService : ITokenServices
                 passenger.Email),
 
             new(
+                ClaimTypes.Role,
+                passenger.Role),
+
+            new(
+                "email_verified",
+                passenger.IsEmailVerified
+                    ? "true"
+                    : "false"),
+
+            new(
                 JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
         };
-
         var securityKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtKey));
 

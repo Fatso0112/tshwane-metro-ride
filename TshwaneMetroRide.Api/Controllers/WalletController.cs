@@ -96,6 +96,7 @@ public class WalletController : ControllerBase
             TransactionType = "TopUp",
             Reference = reference,
             BalanceAfter = busCard.Balance,
+            PaymentMethod = request.PaymentMethod,
             CreatedAtUtc = DateTime.UtcNow,
             BusCardId = busCard.Id
         };
@@ -116,6 +117,7 @@ public class WalletController : ControllerBase
                 walletTransaction.TransactionType,
                 walletTransaction.Amount,
                 walletTransaction.BalanceAfter,
+                walletTransaction.PaymentMethod,
                 walletTransaction.CreatedAtUtc
             },
 
